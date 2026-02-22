@@ -29,7 +29,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
-  final List<Widget> pages = [HomePage(), MyLibraryPage(), ScrollPage()];
+  final List<Widget> pages = [
+    HomePage(),
+    MyLibraryPage(),
+    MyCharacterPage(),
+    HistoryPage(),
+    ScrollPage(),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +48,31 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: ""),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "",
+            backgroundColor: Colors.blue,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark),
+            label: "",
+            backgroundColor: Colors.blue,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "",
+            backgroundColor: Colors.blue,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: "",
+            backgroundColor: Colors.blue,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: "",
+            backgroundColor: Colors.blue,
+          ),
         ],
       ),
     );
