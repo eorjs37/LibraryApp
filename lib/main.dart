@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: ""),
+          BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.list), label: ""),
         ],
       ),
