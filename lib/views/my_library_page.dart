@@ -13,17 +13,19 @@ class _MyLibraryPageState extends State<MyLibraryPage> {
   Widget build(BuildContext context) {
     return (Scaffold(
       appBar: AppBar(
-        title: Row(
+        title: Stack(
+          alignment: Alignment.center,
           children: [
-            Expanded(
-              child: Center(
-                child: Text(
-                  "나의 서재",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+            Center(
+              child: Text(
+                "나의 서재",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-            IconButton(onPressed: () {}, icon: Icon(Icons.search)),
+            Positioned(
+              right: 0,
+              child: IconButton(onPressed: () {}, icon: Icon(Icons.search)),
+            ),
           ],
         ),
       ),
