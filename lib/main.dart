@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter',
+      title: '도서앱',
       home: const MyHomePage(title: '나의서재'),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../widgets/my_character_page/arrorw_text_selector.dart';
 
 class MyCharacterPage extends StatefulWidget {
   @override
@@ -7,6 +8,9 @@ class MyCharacterPage extends StatefulWidget {
 }
 
 class _MyCharacterPageState extends State<MyCharacterPage> {
+  void leftPressed() {}
+  void rightPressed() {}
+
   @override
   Widget build(BuildContext context) {
     return (Scaffold(
@@ -103,6 +107,62 @@ class _MyCharacterPageState extends State<MyCharacterPage> {
             // 이미지
             Center(
               child: Image.asset('assets/images/book_ch.png', height: 350),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: Text(
+                "캐릭터 스토리 보기",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+
+            ArrorwTextSelector(
+              text: "Level1 (0~30cm)",
+              onLeftPressed: null,
+              onRightPressed: rightPressed,
+            ),
+
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(16),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                ),
+                itemCount: 20,
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 3,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 6,
+                          child: Container(
+                            child: const Center(
+                              child: Text(
+                                "?",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: Container(
+                            child: const Center(child: Text("1cm")),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
