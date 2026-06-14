@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/network/api_client.dart';
 import 'views/index.dart';
 
 void main() {
+  ApiClient.init();
   runApp(const MyApp());
 }
 

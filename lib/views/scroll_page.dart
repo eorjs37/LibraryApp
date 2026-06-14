@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../services/fake_api.dart';
+import 'package:flutter_app/models/book.dart';
+import 'package:flutter_app/repositories/book_repository.dart';
+import 'package:flutter_app/services/book_api_service.dart';
+import 'package:flutter_app/widgets/book_item.dart';
 
 class ScrollPage extends StatefulWidget {
   const ScrollPage({super.key});
@@ -10,60 +13,115 @@ class ScrollPage extends StatefulWidget {
 
 class _ScrollPageState extends State<ScrollPage> {
   final ScrollController _controller = ScrollController();
+  final TextEditingController _keywordController = TextEditingController();
   List<String> items = [];
+  List<Book> books = [];
+  String keyword = "";
+  final repository = BookRepository(BookApiService());
 
   int page = 1;
-  final int size = 5;
+  final int size = 50;
   bool isLoading = false;
-  bool hasMore = true;
+  bool hasMore = false;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    _controller.addListener(_onScroll);
+  }
 
-    _controller.addListener(() {
-      if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-        if (!isLoading && hasMore) {
-          fetchData();
-        }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _loadNextIfScreenNotFull() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_controller.hasClients) return;
+      if (isLoading || !hasMore) return;
+
+      final position = _controller.position;
+      if (position.maxScrollExtent <= 0) {
+        loadBooks();
       }
     });
   }
 
-  Future<void> fetchData() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    final newItems = await fakeApi(page, size);
-
-    if (newItems.isEmpty) {
-      hasMore = false;
-    } else {
-      page++;
-      items.addAll(newItems);
+  void _onScroll() {
+    // 맨 아래 도달 감지
+    if (_controller.position.pixels >= _controller.position.maxScrollExtent &&
+        hasMore &&
+        !isLoading) {
+      loadBooks();
     }
+  }
 
+  Future<void> loadBooks() async {
+    if (keyword.isEmpty) return;
+    isLoading = true;
+    hasMore = true;
+    final result = await repository.search(keyword, page: page, size: size);
     setState(() {
-      isLoading = false;
+      books.addAll(result);
+
+      if (result.length < size) {
+        hasMore = false;
+      } else {
+        page++;
+      }
     });
+    isLoading = false;
+    _loadNextIfScreenNotFull();
   }
 
   @override
   Widget build(Object context) {
-    return (ListView.builder(
-      controller: _controller,
-      itemCount: items.length + (hasMore ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index == items.length) {
-          return const Padding(
-            padding: EdgeInsets.all(16),
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
-        return ListTile(title: Text(items[index]));
-      },
-    ));
+    return SafeArea(
+      child: Column(
+        children: [
+          //검색창
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              controller: _keywordController,
+              decoration: InputDecoration(
+                hintText: '책검색',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onSubmitted: (value) {
+                print('value : $value');
+                setState(() {
+                  keyword = value;
+                  page = 1;
+                  books.clear();
+                });
+
+                loadBooks();
+              },
+            ),
+          ),
+
+          Expanded(
+            child: ListView.builder(
+              controller: _controller,
+              itemCount: books.length + (hasMore ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index >= books.length && hasMore) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                return BookItem(book: books[index]);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
