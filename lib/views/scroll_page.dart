@@ -3,6 +3,7 @@ import 'package:flutter_app/models/book.dart';
 import 'package:flutter_app/repositories/book_repository.dart';
 import 'package:flutter_app/services/book_api_service.dart';
 import 'package:flutter_app/widgets/book_item.dart';
+import 'package:flutter_app/widgets/common/warning_modal.dart';
 
 class ScrollPage extends StatefulWidget {
   const ScrollPage({super.key});
@@ -34,6 +35,21 @@ class _ScrollPageState extends State<ScrollPage> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _openWarningModal() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return WarningModal(
+          title: '경고',
+          contents: '책 제목을 입력해주세요',
+          onConfirm: () {
+            Navigator.pop(context); // 부모가 닫음
+          },
+        );
+      },
+    );
   }
 
   void _loadNextIfScreenNotFull() {
@@ -93,7 +109,11 @@ class _ScrollPageState extends State<ScrollPage> {
                 ),
               ),
               onSubmitted: (value) {
-                print('value : $value');
+                print('submit : ${value.trim().isEmpty}');
+                if (value.trim().isEmpty) {
+                  _openWarningModal();
+                  return;
+                }
                 setState(() {
                   keyword = value;
                   page = 1;
