@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/models/book.dart';
 import 'package:flutter_app/repositories/book_repository.dart';
 import 'package:flutter_app/services/book_api_service.dart';
+import 'package:flutter_app/views/detail_page.dart';
 import 'package:flutter_app/widgets/book_item.dart';
 import 'package:flutter_app/widgets/common/warning_modal.dart';
 
@@ -17,6 +18,7 @@ class _ScrollPageState extends State<ScrollPage> {
   final TextEditingController _keywordController = TextEditingController();
   List<String> items = [];
   List<Book> books = [];
+  bool hasSearched = false;
   String keyword = "";
   final repository = BookRepository(BookApiService());
 
@@ -109,7 +111,10 @@ class _ScrollPageState extends State<ScrollPage> {
                 ),
               ),
               onSubmitted: (value) {
-                print('submit : ${value.trim().isEmpty}');
+                setState(() {
+                  hasSearched = true;
+                });
+
                 if (value.trim().isEmpty) {
                   _openWarningModal();
                   return;
@@ -126,19 +131,38 @@ class _ScrollPageState extends State<ScrollPage> {
           ),
 
           Expanded(
-            child: ListView.builder(
-              controller: _controller,
-              itemCount: books.length + (hasMore ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index >= books.length && hasMore) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 24),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-                return BookItem(book: books[index]);
-              },
-            ),
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : !hasSearched
+                ? const Center(child: Text('검색해 보세요'))
+                : books.isEmpty
+                ? const Center(child: Text('정보가 없어요'))
+                : ListView.builder(
+                    controller: _controller,
+                    itemCount: books.length + (hasMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index >= books.length && hasMore) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+
+                      final book = books[index];
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DetailPage(book: book),
+                            ),
+                          );
+                        },
+                        child: BookItem(book: book),
+                      );
+                    },
+                  ),
           ),
         ],
       ),

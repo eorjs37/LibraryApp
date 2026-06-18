@@ -15,4 +15,9 @@ class BookRepository {
 
     return result;
   }
+
+  Future<Book> detail(int itemId) async {
+    final result = await api.detailBook(itemId);
+    return result;
+  }
 }

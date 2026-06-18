@@ -17,4 +17,12 @@ class BookApiService {
 
     return items.map((e) => Book.fromJson(e as Map<String, dynamic>)).toList();
   }
+
+  Future<Book> detailBook(int itemId) async {
+    final response = await ApiClient.dio.get("/api/books/$itemId");
+
+    final Map<String, dynamic> data = response.data as Map<String, dynamic>;
+    final List<dynamic> items = data['item'] as List<dynamic>? ?? [];
+    return Book.fromJson(items.first as Map<String, dynamic>);
+  }
 }
